@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <string.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#incldue "function/funtion.h"
+
+#define SERV_PORT 8000
+#define LISTENQ 1024
+
+int main()
+{
+	int listenfd, connfd;
+	pid_t childpid;
+	socklen_t clilen;
+	struct sockaddr_in cliaddr, servaddr;
+
+	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) <= 0)
+	{
+		perror("socket error: ");
+		return -1;
+	}
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;//指明协议族(ipv4协议)
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);//指定通配地址(32位ip地址)
+	servaddr.sin_port = htons(SERV_PORT);//指定服务器众所周知的端口号
+
+	if (bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr)))
+	{
+		perror("bind error: ");
+		return -1;
+	}
+
+	if (listen(listenfd, LISTENQ))
+	{
+		perror("listen error: ");
+		return -1;
+	}
+
+	while (1)
+	{
+		clilen = sizeof(cliaddr);
+		if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen)) <= 0)
+		{
+			perror("accept error: ");
+			return -1;
+		}
+
+		if ((childpid = fork()) < 0)
+		{
+			perror("fork error: ");
+			return -1;
+		}
+
+		if (childpid == 0)
+		{
+			// child process
+			if (close(listenfd))
+			{
+				perror("close listenfd error");
+				return -1;
+			}
+
+			str_echo(connfd);
+			return 0;
+		}
+		if (close(connfd))
+		{
+			perror("close connfd error: ");
+			return -1;
+		}
+	}
+}
