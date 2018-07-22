@@ -1,0 +1,8 @@
+#ifndef _CLIENT_FUNCTION_H_20130603_
+#define _CLIENT_FUNCTION_H_20130603_
+     
+void str_cli (FILE *, int);
+ssize_t writen (int, const void *, size_t);
+ssize_t readline (int, void *, size_t);
+     
+#endif
