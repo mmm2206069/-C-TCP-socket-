@@ -1,5 +1,5 @@
-#ifndef _CLIENT_FUNCTION_H_20130603_
-#define _CLIENT_FUNCTION_H_20130603_
+#ifndef _CLIENT_FUNCTION_H_20180722_
+#define _CLIENT_FUNCTION_H_20180722_
      
 void str_cli (FILE *, int);
 ssize_t writen (int, const void *, size_t);
